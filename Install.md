@@ -16,4 +16,5 @@ Successfully created .eslintrc.yml file in C:\Users\nnish\Documents\react-excel-
 ESLint was installed locally. We recommend using this local copy instead of your globally-installed copy.
 PS C:\Users\nnish\Documents\react-excel-example>
 
+yarn add eslint-config-airbnb --dev
 ```
