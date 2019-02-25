@@ -15,12 +15,31 @@ const initData = [
   ['She: A History of Adventure', 'H. Rider Haggard', 'English', '1887', '100 million'],
 ];
 
+// const initData = [
+//   ['The Lord of the Rings', 'J. R. R. Tolkien', 'English', '1954–1955', 150],
+//   ['Le Petit Prince (The Little Prince)', 'Antoine de Saint-Exupéry', 'French', '1943', 140],
+//   ["Harry Potter and the Philosopher's Stone", 'J. K. Rowling', 'English', '1997', 107],
+//   ['And Then There Were None', 'Agatha Christie', 'English', '1939', 100],
+//   ['Dream of the Red Chamber', 'Cao Xueqin', 'Chinese', '1754–1791', 100],
+//   ['The Hobbit', 'J. R. R. Tolkien', 'English', '1937', 100],
+//   ['She: A History of Adventure', 'H. Rider Haggard', 'English', '1887', 100],
+// ];
+
+function getDescending(sortby, index, descending) {
+  if (sortby === index) {
+    return descending ? ' \u2191' : ' \u2193';
+  }
+  return '';
+}
+
 class Excel extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      rows: initData,
+      data: initData,
+      sortby: null,
+      descending: false,
     };
 
     this.sort = this.sort.bind(this);
@@ -28,26 +47,38 @@ class Excel extends Component {
 
   sort(e) {
     const column = e.target.cellIndex;
-    const { rows } = this.state;
-    const nextData = Array.from(rows);
-    nextData.sort((a, b) => (a[column] > b[column] ? 1 : -1));
-    this.setState({ rows: nextData });
+    const { data, sortby, descending } = this.state;
+    const nextData = Array.from(data);
+    const nextDescending = sortby === column && !descending;
+    nextData.sort((a, b) => {
+      if (nextDescending) {
+        return (a[column] < b[column] ? 1 : -1);
+      }
+      return (a[column] > b[column] ? 1 : -1);
+    });
+    this.setState({
+      data: nextData, sortby: column, descending: nextDescending,
+    });
   }
 
   render() {
-    const { rows } = this.state;
-    console.log(rows);
+    const { data, sortby, descending } = this.state;
     return (
       <table>
         <thead onClick={this.sort}>
           <tr>
-            {headers.map((title, index) => (<th key={index}>{title}</th>))}
+            {headers.map((title, index) => (
+              <th key={index}>
+                {title}
+                {getDescending(sortby, index, descending)}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
-          {rows.map((row, index) => (
+          {data.map((row, index) => (
             <tr key={index}>
-              {row.map((cell, index) => (<td key={index}>{cell}</td>))}
+              {row.map((cell, j) => (<td key={j}>{cell}</td>))}
             </tr>
           ))}
         </tbody>
