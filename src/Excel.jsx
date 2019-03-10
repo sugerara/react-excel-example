@@ -40,9 +40,12 @@ class Excel extends Component {
       data: initData,
       sortby: null,
       descending: false,
+      edit: null, // {row:行番号, cell:列番号}
     };
 
     this.sort = this.sort.bind(this);
+    this.showEditor = this.showEditor.bind(this);
+    this.save = this.save.bind(this);
   }
 
   sort(e) {
@@ -61,8 +64,31 @@ class Excel extends Component {
     });
   }
 
+  showEditor(e) {
+    this.setState({
+      edit: {
+        row: parseInt(e.target.dataset.row, 10),
+        cell: e.target.cellIndex,
+      },
+    });
+  }
+
+  save(e) {
+    e.preventDefault();
+    const input = e.target.firstChild;
+    const { data, edit: { row, cell } } = this.state;
+    const newData = Array.from(data);
+    newData[row][cell] = input.value;
+    this.setState({
+      edit: null,
+      data: newData,
+    });
+  }
+
   render() {
-    const { data, sortby, descending } = this.state;
+    const {
+      data, sortby, descending, edit,
+    } = this.state;
     return (
       <table>
         <thead onClick={this.sort}>
@@ -75,10 +101,33 @@ class Excel extends Component {
             ))}
           </tr>
         </thead>
-        <tbody>
-          {data.map((row, index) => (
-            <tr key={index}>
-              {row.map((cell, j) => (<td key={j}>{cell}</td>))}
+        <tbody onDoubleClick={this.showEditor}>
+          {data.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              {row.map((cell, cellIndex) => {
+                let content = cell;
+                if (edit && edit.row === rowIndex && edit.cell === cellIndex) {
+                  content = (
+                    <form
+                      onSubmit={this.save}
+                    >
+                      <input
+                        type="text"
+                        defaultValue={cell}
+                      />
+                    </form>
+                  );
+                }
+                return (
+                  <td
+                    key={cellIndex}
+                    data-row={rowIndex}
+                  >
+                    {content}
+                  </td>
+                );
+              })
+            }
             </tr>
           ))}
         </tbody>
