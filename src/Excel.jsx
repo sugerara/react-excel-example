@@ -41,6 +41,7 @@ class Excel extends Component {
       sortby: null,
       descending: false,
       edit: null, // {row:行番号, cell:列番号}
+      search: false,
     };
 
     this.sort = this.sort.bind(this);
@@ -85,7 +86,7 @@ class Excel extends Component {
     });
   }
 
-  render() {
+  renderTable() {
     const {
       data, sortby, descending, edit,
     } = this.state;
@@ -133,6 +134,59 @@ class Excel extends Component {
         </tbody>
       </table>
     );
+  }
+
+  render() {
+    this.sss();
+    return this.renderTable();
+
+    // const {
+    //   data, sortby, descending, edit,
+    // } = this.state;
+    // return (
+    //   <table>
+    //     <thead onClick={this.sort}>
+    //       <tr>
+    //         {headers.map((title, index) => (
+    //           <th key={index}>
+    //             {title}
+    //             {getDescending(sortby, index, descending)}
+    //           </th>
+    //         ))}
+    //       </tr>
+    //     </thead>
+    //     <tbody onDoubleClick={this.showEditor}>
+    //       {data.map((row, rowIndex) => (
+    //         <tr key={rowIndex}>
+    //           {row.map((cell, cellIndex) => {
+    //             let content = cell;
+    //             if (edit && edit.row === rowIndex && edit.cell === cellIndex) {
+    //               content = (
+    //                 <form
+    //                   onSubmit={this.save}
+    //                 >
+    //                   <input
+    //                     type="text"
+    //                     defaultValue={cell}
+    //                   />
+    //                 </form>
+    //               );
+    //             }
+    //             return (
+    //               <td
+    //                 key={cellIndex}
+    //                 data-row={rowIndex}
+    //               >
+    //                 {content}
+    //               </td>
+    //             );
+    //           })
+    //         }
+    //         </tr>
+    //       ))}
+    //     </tbody>
+    //   </table>
+    // );
   }
 }
 
